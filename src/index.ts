@@ -9,7 +9,7 @@ const main = () => {
         
     // })
 
-    swap(new PublicKey("EFojunAC3j8yiUeHKmvwjKEpx52C1wig9djvVkB1F6Y"), 10_000_000, true)
+    swap(new PublicKey("3WuhbyN2pe4QbRAxJeC3excAh15vRZMEQGUuFAVnidU2"), 10_000_000, true)
 
 }
 

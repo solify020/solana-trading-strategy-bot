@@ -38,9 +38,6 @@ const swap = async (poolAddress: PublicKey, swapAmount: number, isBuy: boolean) 
         tokenBProgram: new PublicKey(TOKEN_PROGRAM_ID),
     });
 
-    console.log(swapTx);
-    
-
     const txResult = await sendAndConfirmTransaction(connection, swapTx, [wallet]);
 
     console.log(txResult);
