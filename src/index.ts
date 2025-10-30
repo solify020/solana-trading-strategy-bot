@@ -22,6 +22,17 @@ const getTokenAmount = async (mint : string) => {
 
 
 let index = 0;
+// Global safety nets to ensure unexpected errors never terminate the process
+process.on('unhandledRejection', (reason) => {
+    try {
+        console.error('Unhandled Promise Rejection:', reason);
+    } catch {}
+});
+process.on('uncaughtException', (err) => {
+    try {
+        console.error('Uncaught Exception:', err);
+    } catch {}
+});
 connection.onLogs(
     DBCMigrationKeeper,
     async (log) => {
@@ -37,8 +48,8 @@ connection.onLogs(
                     console.log("buy transaction error ===>", err);
                 }
                 setTimeout(async () => {
-                    const tokenAmount = await getTokenAmount(poolInfo.mint);
                     try {
+                        const tokenAmount = await getTokenAmount(poolInfo.mint);
                         await swap(new PublicKey(poolInfo.poolAddress), tokenAmount, false)
                     } catch(err) {
                         console.log("sell transactin err ===>", err);
