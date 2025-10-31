@@ -16,7 +16,7 @@ const swap = async (poolAddress: PublicKey, swapAmount: number, isBuy: boolean) 
     const quote = await cpAmm.getQuote({
         inAmount: new BN(swapAmount),
         inputTokenMint: isBuy ? poolState.tokenBMint : poolState.tokenAMint,
-        slippage: 100,
+        slippage: 200,
         poolState,
         currentTime: blockTime,
         currentSlot,
@@ -46,7 +46,7 @@ const swap = async (poolAddress: PublicKey, swapAmount: number, isBuy: boolean) 
 
     swapTx.sign(wallet);
 
-    if (USE_JITO) jitoSend(swapTx, parseFloat(JITO_TIP_AMOUNT));
+    if (USE_JITO) await jitoSend(swapTx, parseFloat(JITO_TIP_AMOUNT));
     else await sendAndConfirmTransaction(connection, swapTx, [wallet]);
 }
 

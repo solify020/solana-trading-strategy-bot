@@ -48,6 +48,7 @@ connection.onLogs(
                     await swap(new PublicKey(poolInfo.poolAddress), 10000000, true);
                 } catch(err) {
                     console.log("buy transaction error ===>", err);
+                    return ;
                 }
                 setTimeout(async () => {
                     try {
