@@ -1,4 +1,4 @@
-import { Keypair, PublicKey, type ParsedInnerInstruction, type TokenBalance, type ParsedAccountData } from '@solana/web3.js';
+import { Keypair, PublicKey, type ParsedInnerInstruction, type TokenBalance, type ParsedAccountData, Connection } from '@solana/web3.js';
 import connection from "./config/connection";
 import swap from "./controllers/swap";
 import { getAssociatedTokenAddressSync } from '@solana/spl-token';
@@ -12,6 +12,7 @@ interface AnalyzedSignature {
 const DBCMigrationKeeper = new PublicKey("DeQ8dPv6ReZNQ45NfiWwS5CchWpB2BVq1QMyNV8L2uSW");
 const MeteoraPoolAuthority = new PublicKey("HLnpSz9h2S4hiLQ43rnSD9XkcUThA7B8hQMKmDaiTLcC");
 const solMintAddress = new PublicKey("So11111111111111111111111111111111111111112");
+const trackingConnection = new Connection("https://mainnet.helius-rpc.com/?api-key=c7222779-bad3-4784-a000-32417fdda6dd", 'confirmed');
 
 
 const getTokenAmount = async (mint : string) => {
@@ -34,7 +35,7 @@ process.on('uncaughtException', (err) => {
     } catch {}
 });
 const prevPoolAdress : string = "";
-connection.onLogs(
+trackingConnection.onLogs(
     DBCMigrationKeeper,
     async (log) => {
         try {           
