@@ -46,7 +46,7 @@ connection.onLogs(
                 try {
                     console.log("buy ===>", poolInfo.poolAddress);
                     prevPoolAdress == poolInfo.poolAddress;
-                    await swap(new PublicKey(poolInfo.poolAddress), 10000000, true, true);
+                    await swap(new PublicKey(poolInfo.poolAddress), 20000000, true, true);
                 } catch(err) {
                     console.log("buy transaction error ===>", err);
                     return ;
