@@ -45,7 +45,7 @@ connection.onLogs(
                 // index++;
                 try {
                     console.log("buy ===>", poolInfo.poolAddress);
-                    await swap(new PublicKey(poolInfo.poolAddress), 10000000, true, false);
+                    await swap(new PublicKey(poolInfo.poolAddress), 10000000, true, true);
                 } catch(err) {
                     console.log("buy transaction error ===>", err);
                     return ;
@@ -57,7 +57,7 @@ connection.onLogs(
                     } catch(err) {
                         console.log("sell transactin err ===>", err);
                     }
-                }, 47000)
+                }, 55000)
             }
         } catch(err) {
             console.log("tracking err ===>", err);
