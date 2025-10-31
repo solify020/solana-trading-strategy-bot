@@ -45,7 +45,7 @@ connection.onLogs(
                 index++;
                 try {
                     console.log("buy ===>", poolInfo.poolAddress);
-                    await swap(new PublicKey(poolInfo.poolAddress), 10000000, true);
+                    await swap(new PublicKey(poolInfo.poolAddress), 10000000, true, false);
                 } catch(err) {
                     console.log("buy transaction error ===>", err);
                     return ;
@@ -53,7 +53,7 @@ connection.onLogs(
                 setTimeout(async () => {
                     try {
                         const tokenAmount = await getTokenAmount(poolInfo.mint);
-                        await swap(new PublicKey(poolInfo.poolAddress), tokenAmount, false)
+                        await swap(new PublicKey(poolInfo.poolAddress), tokenAmount, false, true)
                     } catch(err) {
                         console.log("sell transactin err ===>", err);
                     }
@@ -114,7 +114,7 @@ const main = () => {
         
     // })
 
-    swap(new PublicKey("HkFkHhBkUHswJnDxQ6Degugzy2CmerkmPuTA86uMEgPB"), 33294456698, false)
+    // swap(new PublicKey("HkFkHhBkUHswJnDxQ6Degugzy2CmerkmPuTA86uMEgPB"), 33294456698, false)
 
 }
 

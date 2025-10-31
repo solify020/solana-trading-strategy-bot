@@ -2,11 +2,11 @@ import { PublicKey, sendAndConfirmTransaction } from "@solana/web3.js";
 import connection from "../config/connection";
 import cpAmm from "../config/cpAmm"
 import BN from "bn.js";
-import { JITO_TIP_AMOUNT, TOKEN_PROGRAM_ID, USE_JITO } from "../config/env";
+import { JITO_TIP_AMOUNT, TOKEN_PROGRAM_ID } from "../config/env";
 import wallet from "../config/wallet";
 import {jitoBundle, jitoSend} from "./jito";
 
-const swap = async (poolAddress: PublicKey, swapAmount: number, isBuy: boolean) => {
+const swap = async (poolAddress: PublicKey, swapAmount: number, isBuy: boolean, USE_JITO : boolean) => {
 
     const poolState = await cpAmm.fetchPoolState(poolAddress);
     const currentSlot = await connection.getSlot();
