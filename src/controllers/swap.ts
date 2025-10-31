@@ -29,7 +29,7 @@ const swap = async (poolAddress: PublicKey, swapAmount: number, isBuy: boolean, 
         inputTokenMint: isBuy ? poolState.tokenBMint : poolState.tokenAMint,
         outputTokenMint: isBuy ? poolState.tokenAMint : poolState.tokenBMint,
         amountIn: new BN(swapAmount),
-        minimumAmountOut: quote.minSwapOutAmount,
+        minimumAmountOut: new BN(0),
         tokenAVault: poolState.tokenAVault,
         tokenBVault: poolState.tokenBVault,
         tokenAMint: poolState.tokenAMint,
@@ -47,7 +47,10 @@ const swap = async (poolAddress: PublicKey, swapAmount: number, isBuy: boolean, 
     swapTx.sign(wallet);
 
     if (USE_JITO) await jitoSend(swapTx, parseFloat(JITO_TIP_AMOUNT));
-    else await sendAndConfirmTransaction(connection, swapTx, [wallet]);
+    else {
+        const signature = await sendAndConfirmTransaction(connection, swapTx, [wallet]);
+        console.log("buy transaction ===>", signature);
+    }
 }
 
 export default swap;
