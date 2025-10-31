@@ -41,7 +41,7 @@ connection.onLogs(
             const poolInfo : AnalyzedSignature = await analysingSignature(log.signature);
             console.log("pool info ===>", poolInfo, "signature ==>", log.signature);
             // if(poolInfo.depositSolAmount == 72.075922005 || poolInfo.depositSolAmount == 64.321068611) {
-            if(poolInfo.depositSolAmount != 0) {
+            if(poolInfo.depositSolAmount != 0 && poolInfo.depositSolAmount != 48.05061467) {
                 // index++;
                 try {
                     console.log("buy ===>", poolInfo.poolAddress);
