@@ -2,18 +2,16 @@ import { PublicKey, sendAndConfirmTransaction } from "@solana/web3.js";
 import connection from "../config/connection";
 import cpAmm from "../config/cpAmm"
 import BN from "bn.js";
-import { TOKEN_PROGRAM_ID } from "../config/env";
+import { JITO_TIP_AMOUNT, TOKEN_PROGRAM_ID, USE_JITO } from "../config/env";
 import wallet from "../config/wallet";
+import {jitoBundle, jitoSend} from "./jito";
 
 const swap = async (poolAddress: PublicKey, swapAmount: number, isBuy: boolean) => {
-    try {
+
     const poolState = await cpAmm.fetchPoolState(poolAddress);
-    // console.log("pool state ===>", poolState);
     const currentSlot = await connection.getSlot();
     const blockTime = await connection.getBlockTime(currentSlot);
-    console.log("currentSlot ===>", currentSlot);
-    console.log("blocktime ===>", blockTime);
-
+    
     // Get quote first
     const quote = await cpAmm.getQuote({
         inAmount: new BN(swapAmount),
@@ -23,7 +21,6 @@ const swap = async (poolAddress: PublicKey, swapAmount: number, isBuy: boolean) 
         currentTime: blockTime,
         currentSlot,
     });
-    // console.log("quote ===>", quote);
 
     // Execute swap
     const swapTx = await cpAmm.swap({
@@ -41,17 +38,16 @@ const swap = async (poolAddress: PublicKey, swapAmount: number, isBuy: boolean) 
         tokenAProgram: new PublicKey(TOKEN_PROGRAM_ID),
         tokenBProgram: new PublicKey(TOKEN_PROGRAM_ID),
     });
+
+    const latest = await connection.getLatestBlockhash();
+    swapTx.recentBlockhash = latest.blockhash;
+    swapTx.lastValidBlockHeight = latest.lastValidBlockHeight;
     swapTx.feePayer = wallet.publicKey;
-    swapTx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-    swapTx.lastValidBlockHeight = (await connection.getLatestBlockhash()).lastValidBlockHeight;
+
     swapTx.sign(wallet);
 
-    const txResult = await sendAndConfirmTransaction(connection, swapTx, [wallet]);
-
-    console.log(isBuy == true ? "buy tx ===>" : "sell tx ===>", txResult);
-    } catch(err) {
-        console.log("swap error ===>", err);
-    }
+    if (USE_JITO) jitoSend(swapTx, parseFloat(JITO_TIP_AMOUNT));
+    else await sendAndConfirmTransaction(connection, swapTx, [wallet]);
 }
 
 export default swap;

@@ -33,14 +33,16 @@ process.on('uncaughtException', (err) => {
         console.error('Uncaught Exception:', err);
     } catch {}
 });
+
 connection.onLogs(
     DBCMigrationKeeper,
     async (log) => {
         try {           
             const poolInfo : AnalyzedSignature = await analysingSignature(log.signature);
             console.log("pool info ===>", poolInfo, "signature ==>", log.signature);
-            if(poolInfo.depositSolAmount == 72.075922005 || poolInfo.depositSolAmount == 64.321068611) {
-            // if(poolInfo.depositSolAmount != 0) {
+            // if(poolInfo.depositSolAmount == 72.075922005 || poolInfo.depositSolAmount == 64.321068611) {
+            if(poolInfo.depositSolAmount != 0 && index == 0) {
+                index++;
                 try {
                     console.log("buy ===>", poolInfo.poolAddress);
                     await swap(new PublicKey(poolInfo.poolAddress), 10000000, true);
