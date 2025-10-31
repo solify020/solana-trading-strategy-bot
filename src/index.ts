@@ -40,13 +40,14 @@ connection.onLogs(
         try {           
             const poolInfo : AnalyzedSignature = await analysingSignature(log.signature);
             console.log("pool info ===>", poolInfo, "signature ==>", log.signature);
-            if(poolInfo.depositSolAmount == 72.075922005 || poolInfo.depositSolAmount == 64.321068611) {
+            // if(poolInfo.depositSolAmount == 72.075922005 || poolInfo.depositSolAmount == 64.321068611) {
             // if(poolInfo.depositSolAmount != 0 && poolInfo.depositSolAmount != 48.05061467 && poolInfo.depositSolAmount != 84 && prevPoolAdress != poolInfo.poolAddress) {
                 // index++;
+               if(poolInfo.depositSolAmount != 0) {
                 try {
                     console.log("buy ===>", poolInfo.poolAddress);
                     prevPoolAdress == poolInfo.poolAddress;
-                    await swap(new PublicKey(poolInfo.poolAddress), 20000000, true, true);
+                    await swap(new PublicKey(poolInfo.poolAddress), 10000000, true, true);
                 } catch(err) {
                     console.log("buy transaction error ===>", err);
                     return ;
