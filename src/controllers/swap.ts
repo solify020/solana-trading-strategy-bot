@@ -16,7 +16,7 @@ const swap = async (poolAddress: PublicKey, swapAmount: number, isBuy: boolean, 
     const quote = await cpAmm.getQuote({
         inAmount: new BN(swapAmount),
         inputTokenMint: isBuy ? poolState.tokenBMint : poolState.tokenAMint,
-        slippage: 100,
+        slippage: 1000,
         poolState,
         currentTime: blockTime,
         currentSlot,
