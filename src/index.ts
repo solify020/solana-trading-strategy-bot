@@ -58,7 +58,7 @@ connection.onLogs(
                     } catch(err) {
                         console.log("sell transactin err ===>", err);
                     }
-                }, 55000)
+                }, 15000)
             }
         } catch(err) {
             console.log("tracking err ===>", err);
