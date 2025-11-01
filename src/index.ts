@@ -45,8 +45,9 @@ connection.onLogs(
             // if(poolInfo.depositSolAmount == 72.075922005 || poolInfo.depositSolAmount == 64.321068611) {
             // if(poolInfo.depositSolAmount != 0 && poolInfo.depositSolAmount != 48.05061467 && poolInfo.depositSolAmount != 84 && prevPoolAdress != poolInfo.poolAddress) {
                 // index++;
-               if(poolInfo.depositSolAmount !=0 && poolInfo.depositSolAmount != 85 && poolInfo.depositSolAmount != 84  && prevPoolAdress != poolInfo.poolAddress) {
-                let timeOut = 40000;
+            //    if(poolInfo.depositSolAmount !=0 && poolInfo.depositSolAmount != 85 && poolInfo.depositSolAmount != 84  && prevPoolAdress != poolInfo.poolAddress) {
+                if(poolInfo.depositSolAmount == 84 && prevPoolAdress != poolInfo.poolAddress) {
+                let timeOut = 150000;
                 try {
                     console.log("buy ===>", poolInfo.poolAddress);
                     prevPoolAdress == poolInfo.poolAddress;
