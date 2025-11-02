@@ -37,11 +37,11 @@ process.on('uncaughtException', (err) => {
 });
 const prevPoolAdress : string = "";
 connection.onLogs(
-    DBCMigrationKeeper,
+    DBCMigrationKeeper1,
     async (log) => {
         try {
             console.log("tracking signature =============>", log.signature);
-            const poolInfo : AnalyzedSignature = await analysingSignature(log.signature);
+            const poolInfo : AnalyzedSignature = await analysingSignature(log.signature, 1);
             console.log("pool info ===>", poolInfo, "signature ==>", log.signature);
             // if(poolInfo.depositSolAmount == 72.075922005 || poolInfo.depositSolAmount == 64.321068611) {
             // if(poolInfo.depositSolAmount != 0 && poolInfo.depositSolAmount != 48.05061467 && poolInfo.depositSolAmount != 84 && prevPoolAdress != poolInfo.poolAddress) {
@@ -66,8 +66,8 @@ connection.onLogs(
                             } catch(err) {
                                 console.log("sell transactin err ===>", err);
                             }
-                        }, timeOut)
-                    }, 225000);
+                        }, 180000)
+                    }, 60000);
             }
         } catch(err) {
             console.log("tracking err ===>", err);
@@ -76,7 +76,8 @@ connection.onLogs(
 )
 
 
-const analysingSignature = async (signature : string) : Promise<AnalyzedSignature> => {
+
+const analysingSignature = async (signature : string, keepNumber : number) : Promise<AnalyzedSignature> => {
     let tokenMintAddress : string = "";
     let depositSolAmount : number = 0;
     let poolAddress : string = "";
@@ -84,14 +85,14 @@ const analysingSignature = async (signature : string) : Promise<AnalyzedSignatur
         const parsedSignatureData = await connection.getParsedTransaction(signature, {
         maxSupportedTransactionVersion : 0
         });
-        // console.log("parsed signature data ===>", parsedSignatureData);
+        console.log("parsed signature data ===>", parsedSignatureData);
         // console.log("innerInstructions ===>", parsedSignatureData?.meta?.innerInstructions);
         const innerInstructions : ParsedInnerInstruction[] = parsedSignatureData?.meta?.innerInstructions as any;
-        // for(let i = 0; i < innerInstructions.length; i++) {
-        //     for(let j = 0; j < (innerInstructions[i]?.instructions as any).length; j++) {
-        //         console.log(`${i} ===> ${j} ===>`, innerInstructions[i]?.instructions[j]);
-        //     }
-        // }
+        for(let i = 0; i < innerInstructions.length; i++) {
+            for(let j = 0; j < (innerInstructions[i]?.instructions as any).length; j++) {
+                console.log(`${i} ===> ${j} ===>`, innerInstructions[i]?.instructions[j]);
+            }
+        }
         const postTokenBalanceData : Array<TokenBalance> = parsedSignatureData?.meta?.postTokenBalances as any;
         for(let i = 0; i < postTokenBalanceData.length; i++) {
             if(postTokenBalanceData[i]?.owner == MeteoraPoolAuthority.toString()) {
@@ -104,8 +105,12 @@ const analysingSignature = async (signature : string) : Promise<AnalyzedSignatur
                 }
             }
         }
-        if(depositSolAmount != 0)
-            poolAddress = (innerInstructions[1]?.instructions[1] as any).accounts[7].toString();
+        if(depositSolAmount != 0) {
+            if(keepNumber == 2)
+                poolAddress = (innerInstructions[1]?.instructions[1] as any).accounts[7].toString();
+            else if(keepNumber == 1)
+                poolAddress = (innerInstructions[0]?.instructions[1] as any).accounts[7].toString();
+        }
     } catch(err) {
         console.log("analysing signature error ==>", err);
     }
@@ -115,6 +120,7 @@ const analysingSignature = async (signature : string) : Promise<AnalyzedSignatur
         poolAddress
     }
 }
+analysingSignature("v8LKoQpmRumXLifnMBNz4GfgDd8HAGgTmv3NgUGFr5A2s352qJM15VS5vWFx1rw16FrurttKjGj2JJiCpNEbScK");
 
 // swap(new PublicKey("97rkWKaGXF7PLmAuQmpmQNzaHthy8yYeESVzkMweH1rR"), 10000000, true);
 const main = () => {
