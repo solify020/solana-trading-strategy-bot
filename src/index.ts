@@ -46,25 +46,27 @@ connection.onLogs(
             // if(poolInfo.depositSolAmount != 0 && poolInfo.depositSolAmount != 48.05061467 && poolInfo.depositSolAmount != 84 && prevPoolAdress != poolInfo.poolAddress) {
                 // index++;
             //    if(poolInfo.depositSolAmount !=0 && poolInfo.depositSolAmount != 85 && poolInfo.depositSolAmount != 84  && prevPoolAdress != poolInfo.poolAddress) {
-                if(poolInfo.depositSolAmount == 84 && prevPoolAdress != poolInfo.poolAddress) {
-                let timeOut = 210000;
-                try {
+            if(poolInfo.depositSolAmount == 84 && prevPoolAdress != poolInfo.poolAddress) {
+                let timeOut = 60000;
                     console.log("buy ===>", poolInfo.poolAddress);
                     prevPoolAdress == poolInfo.poolAddress;
                     // if(poolInfo.depositSolAmount == 84) timeOut = 75000;
-                    await swap(new PublicKey(poolInfo.poolAddress), 10000000, true, true);
-                } catch(err) {
-                    console.log("buy transaction error ===>", err);
-                    return ;
-                }
-                setTimeout(async () => {
-                    try {
-                        const tokenAmount = await getTokenAmount(poolInfo.mint);
-                        await swap(new PublicKey(poolInfo.poolAddress), tokenAmount, false, true)
-                    } catch(err) {
-                        console.log("sell transactin err ===>", err);
-                    }
-                }, timeOut)
+                    setTimeout(async () => {
+                        try{
+                            await swap(new PublicKey(poolInfo.poolAddress), 10000000, true, true);
+                        } catch(err) {
+                            console.log("buy transaction err ===>", err);
+                            return ;
+                        }
+                        setTimeout(async () => {
+                            try {
+                                const tokenAmount = await getTokenAmount(poolInfo.mint);
+                                await swap(new PublicKey(poolInfo.poolAddress), tokenAmount, false, true)
+                            } catch(err) {
+                                console.log("sell transactin err ===>", err);
+                            }
+                        }, timeOut)
+                    }, 225000);
             }
         } catch(err) {
             console.log("tracking err ===>", err);
