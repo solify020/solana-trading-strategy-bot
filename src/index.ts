@@ -9,7 +9,8 @@ interface AnalyzedSignature {
     poolAddress : string
 }
 
-const DBCMigrationKeeper = new PublicKey("DeQ8dPv6ReZNQ45NfiWwS5CchWpB2BVq1QMyNV8L2uSW");
+const DBCMigrationKeeper2 = new PublicKey("DeQ8dPv6ReZNQ45NfiWwS5CchWpB2BVq1QMyNV8L2uSW");
+const DBCMigrationKeeper1 = new PublicKey("CQdrEsYAxRqkwmpycuTwnMKggr3cr9fqY8Qma4J9TudY");
 const MeteoraPoolAuthority = new PublicKey("HLnpSz9h2S4hiLQ43rnSD9XkcUThA7B8hQMKmDaiTLcC");
 const solMintAddress = new PublicKey("So11111111111111111111111111111111111111112");
 // const trackingConnection = new Connection("https://mainnet.helius-rpc.com/?api-key=c7222779-bad3-4784-a000-32417fdda6dd", 'confirmed');
