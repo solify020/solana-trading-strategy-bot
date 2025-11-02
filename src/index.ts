@@ -114,11 +114,7 @@ const analysingSignature = async (signature : string, keepNumber : number) : Pro
     } catch(err) {
         console.log("analysing signature error ==>", err);
     }
-    console.log({
-        mint : tokenMintAddress,
-        depositSolAmount,
-        poolAddress
-    });
+
     return {
         mint : tokenMintAddress,
         depositSolAmount,
