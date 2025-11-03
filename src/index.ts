@@ -54,7 +54,7 @@ connection.onLogs(
                     // if(poolInfo.depositSolAmount == 84) timeOut = 75000;
                     setTimeout(async () => {
                         try{
-                            await swap(new PublicKey(poolInfo.poolAddress), 5000000, true, true);
+                            await swap(new PublicKey(poolInfo.poolAddress), 10000000, true, true);
                         } catch(err) {
                             console.log("buy transaction err ===>", err);
                             return ;
