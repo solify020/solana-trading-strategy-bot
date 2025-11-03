@@ -66,7 +66,7 @@ connection.onLogs(
                             } catch(err) {
                                 console.log("sell transaction err ===>", err);
                             }
-                        }, 240000)
+                        }, 120000)
                     }, 105000);
                     // keeper2 - after 45s, buy, after 180s, sell
             }
