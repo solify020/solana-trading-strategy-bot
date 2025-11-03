@@ -47,14 +47,14 @@ connection.onLogs(
             // if(poolInfo.depositSolAmount != 0 && poolInfo.depositSolAmount != 48.05061467 && poolInfo.depositSolAmount != 84 && prevPoolAdress != poolInfo.poolAddress) {
                 // index++;
             //    if(poolInfo.depositSolAmount !=0 && poolInfo.depositSolAmount != 85 && poolInfo.depositSolAmount != 84  && prevPoolAdress != poolInfo.poolAddress) {
-            if(poolInfo.depositSolAmount == 84 && prevPoolAdress != poolInfo.poolAddress) {
+            if((poolInfo.depositSolAmount == 84 || poolInfo.depositSolAmount == 85) && prevPoolAdress != poolInfo.poolAddress) {
                 let timeOut = 60000;
                     console.log("buy ===>", poolInfo.poolAddress);
                     prevPoolAdress == poolInfo.poolAddress;
                     // if(poolInfo.depositSolAmount == 84) timeOut = 75000;
                     setTimeout(async () => {
                         try{
-                            await swap(new PublicKey(poolInfo.poolAddress), 10000000, true, true);
+                            await swap(new PublicKey(poolInfo.poolAddress), 5000000, true, true);
                         } catch(err) {
                             console.log("buy transaction err ===>", err);
                             return ;
