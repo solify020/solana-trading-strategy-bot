@@ -4,9 +4,10 @@ import swap from "./controllers/swap";
 import { getAssociatedTokenAddressSync } from '@solana/spl-token';
 
 interface AnalyzedSignature {
-    mint : string,
-    depositSolAmount : number,
-    poolAddress : string
+    mint: string,
+    depositSolAmount: number,
+    poolAddress: string,
+    position: string
 }
 
 const DBCMigrationKeeper2 = new PublicKey("DeQ8dPv6ReZNQ45NfiWwS5CchWpB2BVq1QMyNV8L2uSW");
@@ -16,7 +17,7 @@ const solMintAddress = new PublicKey("So1111111111111111111111111111111111111111
 // const trackingConnection = new Connection("https://mainnet.helius-rpc.com/?api-key=c7222779-bad3-4784-a000-32417fdda6dd", 'confirmed');
 
 
-const getTokenAmount = async (mint : string) => {
+const getTokenAmount = async (mint: string) => {
     const associatedTokenAccount = await getAssociatedTokenAddressSync(new PublicKey(mint), new PublicKey("78fxDjnst3PrJu17Z7guDxxnHT99wfSbdePnVaC9r4SS"));
     const accountData = await connection.getParsedAccountInfo(associatedTokenAccount, 'confirmed');
     return (accountData.value?.data as ParsedAccountData).parsed.info.tokenAmount.uiAmount * (10 ** (accountData.value?.data as ParsedAccountData).parsed.info.tokenAmount.decimals);
@@ -28,51 +29,49 @@ let index = 0;
 process.on('unhandledRejection', (reason) => {
     try {
         console.error('Unhandled Promise Rejection:', reason);
-    } catch {}
+    } catch { }
 });
 process.on('uncaughtException', (err) => {
     try {
         console.error('Uncaught Exception:', err);
-    } catch {}
+    } catch { }
 });
-const prevPoolAdress : string = "";
+const prevPoolAdress: string = "";
 connection.onLogs(
     DBCMigrationKeeper1,
     async (log) => {
         try {
             console.log("tracking signature =============>", log.signature);
-            const poolInfo : AnalyzedSignature = await analysingSignature(log.signature, 1);
+            const poolInfo: AnalyzedSignature = await analysingSignature(log.signature, 1);
             console.log("pool info ===>", poolInfo, "signature ==>", log.signature);
             // if(poolInfo.depositSolAmount == 72.075922005 || poolInfo.depositSolAmount == 64.321068611) {
             // if(poolInfo.depositSolAmount != 0 && poolInfo.depositSolAmount != 48.05061467 && poolInfo.depositSolAmount != 84 && prevPoolAdress != poolInfo.poolAddress) {
-                // index++;
+            // index++;
             //    if(poolInfo.depositSolAmount !=0 && poolInfo.depositSolAmount != 85 && poolInfo.depositSolAmount != 84  && prevPoolAdress != poolInfo.poolAddress) {
-            if(poolInfo.depositSolAmount == 84 && prevPoolAdress != poolInfo.poolAddress) {
-                    console.log("buy ===>", poolInfo.poolAddress);
-                    prevPoolAdress == poolInfo.poolAddress;
-                    // if(poolInfo.depositSolAmount == 84) timeOut = 75000;
-                    setTimeout(async () => {
-                        try{
-                            await swap(new PublicKey(poolInfo.poolAddress), 10000000, true, true);
-                        } catch(err) {
-                            console.log("buy transaction err ===>", err);
-                            return ;
-                        }
-                        setTimeout(async () => {
-                            try {
-                                const tokenAmount = await getTokenAmount(poolInfo.mint);
-                                await swap(new PublicKey(poolInfo.poolAddress), tokenAmount, false, true)
-                            } catch(err) {
-                                console.log("sell transaction err ===>", err);
-                            }
-                        }, 130000)
-                    }, 65000);
-                    // keeper2 - after 45s, buy, after 180s, sell (1min ~ 4 min)
-                    // all pool(old setting) - after 105s, buy, after 120s, sell
-                    // keeper1 85sol - after 5.45s, buy, after 2min, sell (range 6min ~ 8 min)
-                    // keeper1 84sol - after 65s, buy, after 130s, sell
+
+            if (poolInfo.depositSolAmount == 84 && prevPoolAdress != poolInfo.poolAddress) {
+                console.log("buy ===>", poolInfo.poolAddress);
+                prevPoolAdress == poolInfo.poolAddress;
+                // if(poolInfo.depositSolAmount == 84) timeOut = 75000;
+                await swap(new PublicKey(poolInfo.poolAddress), 10000000, true, true);
+                // setTimeout(async () => {
+                //     try {
+                //         const tokenAmount = await getTokenAmount(poolInfo.mint);
+                //         await swap(new PublicKey(poolInfo.poolAddress), tokenAmount, false, true)
+                //     } catch (err) {
+                //         console.log("sell transaction err ===>", err);
+                //     }
+                // }, 130000)
+                const tokenAmount = await getTokenAmount(poolInfo.mint);
+                connection.onLogs(new PublicKey(poolInfo.position), async () => {
+                    await swap(new PublicKey(poolInfo.poolAddress), tokenAmount, false, true)
+                }, "processed")
+                // keeper2 - after 45s, buy, after 180s, sell (1min ~ 4 min)
+                // all pool(old setting) - after 105s, buy, after 120s, sell
+                // keeper1 85sol - after 5.45s, buy, after 2min, sell (range 6min ~ 8 min)
+                // keeper1 84sol - after 65s, buy, after 130s, sell
             }
-        } catch(err) {
+        } catch (err) {
             console.log("tracking err ===>", err);
         }
     }
@@ -80,26 +79,27 @@ connection.onLogs(
 
 
 
-const analysingSignature = async (signature : string, keepNumber : number) : Promise<AnalyzedSignature> => {
-    let tokenMintAddress : string = "";
-    let depositSolAmount : number = 0;
-    let poolAddress : string = "";
+const analysingSignature = async (signature: string, keepNumber: number): Promise<AnalyzedSignature> => {
+    let tokenMintAddress: string = "";
+    let depositSolAmount: number = 0;
+    let poolAddress: string = "";
+    let position: string = "";
     try {
         const parsedSignatureData = await connection.getParsedTransaction(signature, {
-        maxSupportedTransactionVersion : 0
+            maxSupportedTransactionVersion: 0
         });
         // console.log("parsed signature data ===>", parsedSignatureData);
         // console.log("innerInstructions ===>", parsedSignatureData?.meta?.innerInstructions);
-        const innerInstructions : ParsedInnerInstruction[] = parsedSignatureData?.meta?.innerInstructions as any;
+        const innerInstructions: ParsedInnerInstruction[] = parsedSignatureData?.meta?.innerInstructions as any;
         // for(let i = 0; i < innerInstructions.length; i++) {
         //     for(let j = 0; j < (innerInstructions[i]?.instructions as any).length; j++) {
         //         console.log(`${i} ===> ${j} ===>`, innerInstructions[i]?.instructions[j]);
         //     }
         // }
-        const postTokenBalanceData : Array<TokenBalance> = parsedSignatureData?.meta?.postTokenBalances as any;
-        for(let i = 0; i < postTokenBalanceData.length; i++) {
-            if(postTokenBalanceData[i]?.owner == MeteoraPoolAuthority.toString()) {
-                if(postTokenBalanceData[i]?.mint == solMintAddress.toString()) {
+        const postTokenBalanceData: Array<TokenBalance> = parsedSignatureData?.meta?.postTokenBalances as any;
+        for (let i = 0; i < postTokenBalanceData.length; i++) {
+            if (postTokenBalanceData[i]?.owner == MeteoraPoolAuthority.toString()) {
+                if (postTokenBalanceData[i]?.mint == solMintAddress.toString()) {
                     // console.log("deposit Sol Amount ====>", postTokenBalanceData[i]?.uiTokenAmount.uiAmount);
                     depositSolAmount = postTokenBalanceData[i]?.uiTokenAmount.uiAmount as number;
                 } else {
@@ -108,28 +108,37 @@ const analysingSignature = async (signature : string, keepNumber : number) : Pro
                 }
             }
         }
-        if(depositSolAmount != 0) {
-            if(keepNumber == 2) {
-                if( (innerInstructions[1]?.instructions[1] as any) == undefined)
+        if (depositSolAmount != 0) {
+            if (keepNumber == 2) {
+                if ((innerInstructions[1]?.instructions[1] as any) == undefined) {
                     poolAddress = (innerInstructions[0]?.instructions[0] as any).accounts[7].toString();
-                else
+                    position = (innerInstructions[0]?.instructions[0] as any).accounts[8].toString();
+                }
+                else {
                     poolAddress = (innerInstructions[1]?.instructions[1] as any).accounts[7].toString();
+                    position = (innerInstructions[1]?.instructions[1] as any).accounts[8].toString();
+                }
             }
-            else if(keepNumber == 1) {
-                if((innerInstructions[0]?.instructions[1] as any).accounts == undefined)
+            else if (keepNumber == 1) {
+                if ((innerInstructions[0]?.instructions[1] as any).accounts == undefined) {
                     poolAddress = (innerInstructions[0]?.instructions[0] as any).accounts[7].toString();
-                else
+                    position = (innerInstructions[0]?.instructions[0] as any).accounts[8].toString();
+                }
+                else {
                     poolAddress = (innerInstructions[0]?.instructions[1] as any).accounts[7].toString();
+                    position = (innerInstructions[0]?.instructions[1] as any).accounts[8].toString();
+                }
             }
         }
-    } catch(err) {
+    } catch (err) {
         console.log("analysing signature error ==>", err);
     }
 
     return {
-        mint : tokenMintAddress,
+        mint: tokenMintAddress,
         depositSolAmount,
-        poolAddress
+        poolAddress,
+        position
     }
 }
 // analysingSignature("4g2a93mayZVP3syzaomc294XDpmAXFDkex6WdnYXqpV3etsiNcAJZ6dkPi87cxxAPqC11QEx1WFP1J9SNdD2zZaK", 2);
@@ -139,7 +148,7 @@ const main = () => {
 
     // connection.onLogs(new PublicKey("DeQ8dPv6ReZNQ45NfiWwS5CchWpB2BVq1QMyNV8L2uSW"), (logs, ctx) => {
     //     console.log(logs);
-        
+
     // })
 
     // swap(new PublicKey("HkFkHhBkUHswJnDxQ6Degugzy2CmerkmPuTA86uMEgPB"), 33294456698, false)
