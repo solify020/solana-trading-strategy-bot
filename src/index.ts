@@ -38,7 +38,7 @@ process.on('uncaughtException', (err) => {
 });
 const prevPoolAdress: string = "";
 connection.onLogs(
-    DBCMigrationKeeper1,
+    DBCMigrationKeeper2,
     async (log) => {
         try {
             console.log("tracking signature =============>", log.signature);
@@ -49,7 +49,7 @@ connection.onLogs(
             // index++;
             //    if(poolInfo.depositSolAmount !=0 && poolInfo.depositSolAmount != 85 && poolInfo.depositSolAmount != 84  && prevPoolAdress != poolInfo.poolAddress) {
 
-            if (poolInfo.depositSolAmount == 84 && prevPoolAdress != poolInfo.poolAddress) {
+            if (poolInfo.depositSolAmount == 84 || poolInfo.depositSolAmount == 85 && prevPoolAdress != poolInfo.poolAddress) {
                 console.log("buy ===>", poolInfo.poolAddress);
                 prevPoolAdress == poolInfo.poolAddress;
                 // if(poolInfo.depositSolAmount == 84) timeOut = 75000;
@@ -63,7 +63,9 @@ connection.onLogs(
                 //     }
                 // }, 130000)
                 const tokenAmount = await getTokenAmount(poolInfo.mint);
-                connection.onLogs(new PublicKey(poolInfo.position), async () => {
+                connection.onLogs(new PublicKey(poolInfo.position), async (log) => {
+                    console.log("Removing Liquidity!", log);
+                    console.log("Sell ===> ", tokenAmount);
                     await swap(new PublicKey(poolInfo.poolAddress), tokenAmount, false, true)
                 }, "processed")
                 // keeper2 - after 45s, buy, after 180s, sell (1min ~ 4 min)
