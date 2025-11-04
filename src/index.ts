@@ -90,11 +90,11 @@ const analysingSignature = async (signature : string, keepNumber : number) : Pro
         // console.log("parsed signature data ===>", parsedSignatureData);
         // console.log("innerInstructions ===>", parsedSignatureData?.meta?.innerInstructions);
         const innerInstructions : ParsedInnerInstruction[] = parsedSignatureData?.meta?.innerInstructions as any;
-        for(let i = 0; i < innerInstructions.length; i++) {
-            for(let j = 0; j < (innerInstructions[i]?.instructions as any).length; j++) {
-                console.log(`${i} ===> ${j} ===>`, innerInstructions[i]?.instructions[j]);
-            }
-        }
+        // for(let i = 0; i < innerInstructions.length; i++) {
+        //     for(let j = 0; j < (innerInstructions[i]?.instructions as any).length; j++) {
+        //         console.log(`${i} ===> ${j} ===>`, innerInstructions[i]?.instructions[j]);
+        //     }
+        // }
         const postTokenBalanceData : Array<TokenBalance> = parsedSignatureData?.meta?.postTokenBalances as any;
         for(let i = 0; i < postTokenBalanceData.length; i++) {
             if(postTokenBalanceData[i]?.owner == MeteoraPoolAuthority.toString()) {
