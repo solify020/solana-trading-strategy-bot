@@ -47,7 +47,7 @@ connection.onLogs(
             // if(poolInfo.depositSolAmount != 0 && poolInfo.depositSolAmount != 48.05061467 && poolInfo.depositSolAmount != 84 && prevPoolAdress != poolInfo.poolAddress) {
                 // index++;
             //    if(poolInfo.depositSolAmount !=0 && poolInfo.depositSolAmount != 85 && poolInfo.depositSolAmount != 84  && prevPoolAdress != poolInfo.poolAddress) {
-            if(poolInfo.depositSolAmount == 85 && prevPoolAdress != poolInfo.poolAddress) {
+            if(poolInfo.depositSolAmount == 84 && prevPoolAdress != poolInfo.poolAddress) {
                     console.log("buy ===>", poolInfo.poolAddress);
                     prevPoolAdress == poolInfo.poolAddress;
                     // if(poolInfo.depositSolAmount == 84) timeOut = 75000;
@@ -65,8 +65,8 @@ connection.onLogs(
                             } catch(err) {
                                 console.log("sell transaction err ===>", err);
                             }
-                        }, 120000)
-                    }, 345000);
+                        }, 150000)
+                    }, 45000);
                     // keeper2 - after 45s, buy, after 180s, sell (1min ~ 4 min)
                     // all pool(old setting) - after 105s, buy, after 120s, sell
                     // keeper1 85sol - after 5.45s, buy, after 2min, sell (range 6min ~ 8 min)
