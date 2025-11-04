@@ -65,8 +65,8 @@ connection.onLogs(
                             } catch(err) {
                                 console.log("sell transaction err ===>", err);
                             }
-                        }, 150000)
-                    }, 45000);
+                        }, 130000)
+                    }, 65000);
                     // keeper2 - after 45s, buy, after 180s, sell (1min ~ 4 min)
                     // all pool(old setting) - after 105s, buy, after 120s, sell
                     // keeper1 85sol - after 5.45s, buy, after 2min, sell (range 6min ~ 8 min)
