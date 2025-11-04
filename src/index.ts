@@ -37,11 +37,11 @@ process.on('uncaughtException', (err) => {
 });
 const prevPoolAdress : string = "";
 connection.onLogs(
-    DBCMigrationKeeper1,
+    DBCMigrationKeeper2,
     async (log) => {
         try {
             console.log("tracking signature =============>", log.signature);
-            const poolInfo : AnalyzedSignature = await analysingSignature(log.signature, 1);
+            const poolInfo : AnalyzedSignature = await analysingSignature(log.signature, 2);
             console.log("pool info ===>", poolInfo, "signature ==>", log.signature);
             // if(poolInfo.depositSolAmount == 72.075922005 || poolInfo.depositSolAmount == 64.321068611) {
             // if(poolInfo.depositSolAmount != 0 && poolInfo.depositSolAmount != 48.05061467 && poolInfo.depositSolAmount != 84 && prevPoolAdress != poolInfo.poolAddress) {
@@ -65,11 +65,12 @@ connection.onLogs(
                             } catch(err) {
                                 console.log("sell transaction err ===>", err);
                             }
-                        }, 130000)
-                    }, 65000);
+                        }, 180000)
+                    }, 45000);
                     // keeper2 - after 45s, buy, after 180s, sell (1min ~ 4 min)
                     // all pool(old setting) - after 105s, buy, after 120s, sell
                     // keeper1 85sol - after 5.45s, buy, after 2min, sell (range 6min ~ 8 min)
+                    // keeper1 84sol - after 65s, buy, after 130s, sell
             }
         } catch(err) {
             console.log("tracking err ===>", err);
