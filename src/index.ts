@@ -109,8 +109,12 @@ const analysingSignature = async (signature : string, keepNumber : number) : Pro
             }
         }
         if(depositSolAmount != 0) {
-            if(keepNumber == 2)
-                poolAddress = (innerInstructions[1]?.instructions[1] as any).accounts[7].toString();
+            if(keepNumber == 2) {
+                if( (innerInstructions[1]?.instructions[1] as any).accounts == undefined)
+                    poolAddress = (innerInstructions[0]?.instructions[0] as any).accounts[7].toString();
+                else
+                    poolAddress = (innerInstructions[1]?.instructions[1] as any).accounts[7].toString();
+            }
             else if(keepNumber == 1) {
                 if((innerInstructions[0]?.instructions[1] as any).accounts == undefined)
                     poolAddress = (innerInstructions[0]?.instructions[0] as any).accounts[7].toString();
@@ -128,7 +132,7 @@ const analysingSignature = async (signature : string, keepNumber : number) : Pro
         poolAddress
     }
 }
-// analysingSignature("4xNvgJjrmDWBxgL5EY4aJP2ofaBvLKfPikWnDZKnc5hAN8gWfNSZEzMkrHHPmVxHd3YqRmEYsJP3t2ne4TuMExsh", 1);
+// analysingSignature("4g2a93mayZVP3syzaomc294XDpmAXFDkex6WdnYXqpV3etsiNcAJZ6dkPi87cxxAPqC11QEx1WFP1J9SNdD2zZaK", 2);
 
 // swap(new PublicKey("97rkWKaGXF7PLmAuQmpmQNzaHthy8yYeESVzkMweH1rR"), 10000000, true);
 const main = () => {
