@@ -90,11 +90,11 @@ const analysingSignature = async (signature : string, keepNumber : number) : Pro
         // console.log("parsed signature data ===>", parsedSignatureData);
         // console.log("innerInstructions ===>", parsedSignatureData?.meta?.innerInstructions);
         const innerInstructions : ParsedInnerInstruction[] = parsedSignatureData?.meta?.innerInstructions as any;
-        // for(let i = 0; i < innerInstructions.length; i++) {
-        //     for(let j = 0; j < (innerInstructions[i]?.instructions as any).length; j++) {
-        //         console.log(`${i} ===> ${j} ===>`, innerInstructions[i]?.instructions[j]);
-        //     }
-        // }
+        for(let i = 0; i < innerInstructions.length; i++) {
+            for(let j = 0; j < (innerInstructions[i]?.instructions as any).length; j++) {
+                console.log(`${i} ===> ${j} ===>`, innerInstructions[i]?.instructions[j]);
+            }
+        }
         const postTokenBalanceData : Array<TokenBalance> = parsedSignatureData?.meta?.postTokenBalances as any;
         for(let i = 0; i < postTokenBalanceData.length; i++) {
             if(postTokenBalanceData[i]?.owner == MeteoraPoolAuthority.toString()) {
@@ -110,8 +110,12 @@ const analysingSignature = async (signature : string, keepNumber : number) : Pro
         if(depositSolAmount != 0) {
             if(keepNumber == 2)
                 poolAddress = (innerInstructions[1]?.instructions[1] as any).accounts[7].toString();
-            else if(keepNumber == 1)
-                poolAddress = (innerInstructions[0]?.instructions[1] as any).accounts[7].toString();
+            else if(keepNumber == 1) {
+                if((innerInstructions[0]?.instructions[1] as any).accounts == undefined)
+                    poolAddress = (innerInstructions[0]?.instructions[0] as any).accounts[7].toString();
+                else
+                    poolAddress = (innerInstructions[0]?.instructions[1] as any).accounts[7].toString();
+            }
         }
     } catch(err) {
         console.log("analysing signature error ==>", err);
@@ -123,7 +127,7 @@ const analysingSignature = async (signature : string, keepNumber : number) : Pro
         poolAddress
     }
 }
-// analysingSignature("v8LKoQpmRumXLifnMBNz4GfgDd8HAGgTmv3NgUGFr5A2s352qJM15VS5vWFx1rw16FrurttKjGj2JJiCpNEbScK", 1);
+// analysingSignature("4xNvgJjrmDWBxgL5EY4aJP2ofaBvLKfPikWnDZKnc5hAN8gWfNSZEzMkrHHPmVxHd3YqRmEYsJP3t2ne4TuMExsh", 1);
 
 // swap(new PublicKey("97rkWKaGXF7PLmAuQmpmQNzaHthy8yYeESVzkMweH1rR"), 10000000, true);
 const main = () => {
