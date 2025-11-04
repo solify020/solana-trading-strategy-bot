@@ -110,7 +110,7 @@ const analysingSignature = async (signature : string, keepNumber : number) : Pro
         }
         if(depositSolAmount != 0) {
             if(keepNumber == 2) {
-                if( (innerInstructions[1]?.instructions[1] as any).accounts == undefined)
+                if( (innerInstructions[1]?.instructions[1] as any) == undefined)
                     poolAddress = (innerInstructions[0]?.instructions[0] as any).accounts[7].toString();
                 else
                     poolAddress = (innerInstructions[1]?.instructions[1] as any).accounts[7].toString();
