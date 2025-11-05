@@ -16,8 +16,6 @@ const MeteoraPoolAuthority = new PublicKey("HLnpSz9h2S4hiLQ43rnSD9XkcUThA7B8hQMK
 const solMintAddress = new PublicKey("So11111111111111111111111111111111111111112");
 // const trackingConnection = new Connection("https://mainnet.helius-rpc.com/?api-key=c7222779-bad3-4784-a000-32417fdda6dd", 'confirmed');
 
-const subIds = [];
-
 const getTokenAmount = async (mint: string) => {
     const associatedTokenAccount = await getAssociatedTokenAddressSync(new PublicKey(mint), new PublicKey("78fxDjnst3PrJu17Z7guDxxnHT99wfSbdePnVaC9r4SS"));
     const accountData = await connection.getParsedAccountInfo(associatedTokenAccount, 'confirmed');
@@ -63,6 +61,8 @@ connection.onLogs(
                 //         console.log("sell transaction err ===>", err);
                 //     }
                 // }, 130000)
+                console.log("Position ===> ", poolInfo.position);
+                
                 const tokenAmount = await getTokenAmount(poolInfo.mint);
                 const subId = connection.onLogs(new PublicKey(poolInfo.position), async (log) => {
                     console.log("Removing Liquidity!", log);
@@ -70,7 +70,6 @@ connection.onLogs(
                     await swap(new PublicKey(poolInfo.poolAddress), tokenAmount, false, true);
                     connection.removeOnLogsListener(subId);
                 }, "processed");
-                subIds.push(subId);
                 // keeper2 - after 45s, buy, after 180s, sell (1min ~ 4 min)
                 // all pool(old setting) - after 105s, buy, after 120s, sell
                 // keeper1 85sol - after 5.45s, buy, after 2min, sell (range 6min ~ 8 min)
