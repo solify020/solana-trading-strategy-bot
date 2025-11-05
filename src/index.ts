@@ -39,7 +39,7 @@ process.on('uncaughtException', (err) => {
 });
 const prevPoolAdress: string = "";
 connection.onLogs(
-    DBCMigrationKeeper1,
+    DBCMigrationKeeper2,
     async (log) => {
         try {
             console.log("tracking signature =============>", log.signature);
