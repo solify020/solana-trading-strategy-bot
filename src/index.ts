@@ -16,6 +16,7 @@ const MeteoraPoolAuthority = new PublicKey("HLnpSz9h2S4hiLQ43rnSD9XkcUThA7B8hQMK
 const solMintAddress = new PublicKey("So11111111111111111111111111111111111111112");
 // const trackingConnection = new Connection("https://mainnet.helius-rpc.com/?api-key=c7222779-bad3-4784-a000-32417fdda6dd", 'confirmed');
 
+const subIds = [];
 
 const getTokenAmount = async (mint: string) => {
     const associatedTokenAccount = await getAssociatedTokenAddressSync(new PublicKey(mint), new PublicKey("78fxDjnst3PrJu17Z7guDxxnHT99wfSbdePnVaC9r4SS"));
@@ -38,7 +39,7 @@ process.on('uncaughtException', (err) => {
 });
 const prevPoolAdress: string = "";
 connection.onLogs(
-    DBCMigrationKeeper2,
+    DBCMigrationKeeper1,
     async (log) => {
         try {
             console.log("tracking signature =============>", log.signature);
@@ -63,11 +64,13 @@ connection.onLogs(
                 //     }
                 // }, 130000)
                 const tokenAmount = await getTokenAmount(poolInfo.mint);
-                connection.onLogs(new PublicKey(poolInfo.position), async (log) => {
+                const subId = connection.onLogs(new PublicKey(poolInfo.position), async (log) => {
                     console.log("Removing Liquidity!", log);
                     console.log("Sell ===> ", tokenAmount);
-                    await swap(new PublicKey(poolInfo.poolAddress), tokenAmount, false, true)
-                }, "processed")
+                    await swap(new PublicKey(poolInfo.poolAddress), tokenAmount, false, true);
+                    connection.removeOnLogsListener(subId);
+                }, "processed");
+                subIds.push(subId);
                 // keeper2 - after 45s, buy, after 180s, sell (1min ~ 4 min)
                 // all pool(old setting) - after 105s, buy, after 120s, sell
                 // keeper1 85sol - after 5.45s, buy, after 2min, sell (range 6min ~ 8 min)
